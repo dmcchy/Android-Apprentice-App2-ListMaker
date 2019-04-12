@@ -4,14 +4,17 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
-class ListSelectionRecyclerViewAdapter :
+class ListSelectionRecyclerViewAdapter (private val lists : ArrayList<TaskList>) :
     // This RecycleView "Configuration" holds my Adapter
     RecyclerView.Adapter<ListSelectionViewHolder>() {
+
+    // Mock data
+    // var listTitles = arrayOf("Shopping List", "Chores", "Android Tutorials")
 
     override fun onBindViewHolder(holder: ListSelectionViewHolder, position: Int) {
         if (holder != null) {
             holder.listPosition.text = (position + 1).toString()
-            holder.listTitle.text = listTitles[position]
+            holder.listTitle.text = lists.get(position).name
         }
     }
 
@@ -19,7 +22,7 @@ class ListSelectionRecyclerViewAdapter :
 
         // Create a layout programatically is this like react,
         // that is merely given data, and renders it programmatically?
-        val view = LayoutInflater.from(parent?.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_selection_view_holder,
                 parent,
                 false)
@@ -29,15 +32,15 @@ class ListSelectionRecyclerViewAdapter :
     }
 
 
-    // Mock data
-    var listTitles = arrayOf("Shopping List", "Chores", "Android Tutorials")
-
     override fun getItemCount(): Int {
-        return listTitles.size
+        return lists.size
     }
 
+    fun addList(list: TaskList) {
+        // 1
+        lists.add(list)
 
-
-
-
+        // 2
+        notifyDataSetChanged()
+    }
 }

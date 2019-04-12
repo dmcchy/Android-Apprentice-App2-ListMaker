@@ -1,7 +1,6 @@
 package com.raywenderlich.listmaker
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
@@ -18,10 +17,14 @@ class MainActivity : AppCompatActivity() {
     // "lateinit" = this item is going to be created sometime in the "future". hmmm for optimization purposes I guess...
     lateinit var listsRecyclerView: RecyclerView
 
+    val listDataManager: ListDataManager = ListDataManager(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+
 
         // Do some actions here.
         fab.setOnClickListener { view ->
@@ -36,10 +39,17 @@ class MainActivity : AppCompatActivity() {
         // your items in a linear format.
         // The LinearLayoutManager will work perfectly for this.
         // You also pass in the Activity so the layout manager can access its Context.
-        listsRecyclerView.layoutManager = LinearLayoutManager(this)
+        // listsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // This lets the RecyclerView know what to use as its adapter.
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
+        // listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
+
+
+        val lists = listDataManager.readLists()
+        listsRecyclerView.findViewById<RecyclerView>(R.id.lists_recyclerview)
+        listsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,7 +85,16 @@ class MainActivity : AppCompatActivity() {
         builder.setView(listTitleEditText)
 
         // 3
-        builder.setPositiveButton(positiveButtonTitle, { dialog, i -> dialog.dismiss() })
+        builder.setPositiveButton(positiveButtonTitle) { dialog, i ->
+
+            val list = TaskList(listTitleEditText.text.toString())
+            listDataManager.saveList(list)
+
+            val recyclerAdapter = listsRecyclerView.adapter as ListSelectionRecyclerViewAdapter
+            recyclerAdapter.addList(list)
+
+            dialog.dismiss()
+        }
 
         // 4
         builder.create().show()
