@@ -2,11 +2,14 @@ package com.raywenderlich.listmaker
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -20,9 +23,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        // Do some actions here.
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            showCreateListDialog()
         }
 
         // Set listsRecyclerView by referencing the ID of the RecyclerView you set up in your layout
@@ -53,5 +56,28 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showCreateListDialog() {
+        // Get string data from "strings.xml"
+        // 1
+        val dialogTitle = getString(R.string.name_of_list)
+        val positiveButtonTitle = getString(R.string.create_list)
+
+        // Configure the builder, make a dialogue with a text view.
+        // 2
+        val builder = AlertDialog.Builder(this)
+        val listTitleEditText = EditText(this)
+        // TYPE_CLASS_TEXT means a Edit
+        listTitleEditText.inputType = InputType.TYPE_CLASS_TEXT
+
+        builder.setTitle(dialogTitle)
+        builder.setView(listTitleEditText)
+
+        // 3
+        builder.setPositiveButton(positiveButtonTitle, { dialog, i -> dialog.dismiss() })
+
+        // 4
+        builder.create().show()
     }
 }
