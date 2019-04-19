@@ -10,6 +10,7 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.FrameLayout
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(),
     ListSelectionFragment.OnListItemFragmentInteractionListener {
 
+    private var fragmentContainer: FrameLayout? = null
 
     private var listSelectionFragment: ListSelectionFragment =
         ListSelectionFragment.newInstance()
@@ -36,28 +38,22 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        /**
+         * A FragmentManager is an object that lets you dynamically add and remove Fragments at runtime.
+         * This gives you a powerful tool to make your UI as fluid as possible for various screens.
+         */
 
+        fragmentContainer = findViewById(R.id.fragment_container)
+
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.fragment_container, listSelectionFragment)
+            .commit()
 
         // Do some actions here.
         fab.setOnClickListener { view ->
             showCreateListDialog()
         }
-
-        // Set listsRecyclerView by referencing the ID of the RecyclerView you set up in your layout
-        listsRecyclerView = findViewById<RecyclerView>(R.id.lists_recyclerview)
-
-        // Let the RecyclerView know what kind of layout you want to present your items in.
-        // This is similar to the Layouts you can use with your XML layouts, and you’ll need something to arrange
-        // your items in a linear format.
-        // The LinearLayoutManager will work perfectly for this.
-        // You also pass in the Activity so the layout manager can access its Context.
-        // listsRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        // This lets the RecyclerView know what to use as its adapter.
-        // listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
-
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
