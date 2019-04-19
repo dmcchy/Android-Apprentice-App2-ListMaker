@@ -7,4 +7,10 @@
         android:layout_height="match_parent"
         tools:context=".ListDetailActivity">
 
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="395dp"
+            android:layout_height="587dp"
+            android:id="@+id/list_items_recyclerview" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>
