@@ -16,8 +16,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(),
-    ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener
-{
+    ListSelectionFragment.OnListItemFragmentInteractionListener {
+
+
+    private var listSelectionFragment: ListSelectionFragment =
+        ListSelectionFragment.newInstance()
 
     companion object {
         val INTENT_LIST_KEY = "list"
@@ -25,9 +28,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     // "lateinit" = this item is going to be created sometime in the "future". hmmm for optimization purposes I guess...
-    lateinit var listsRecyclerView: RecyclerView
-
-    val listDataManager: ListDataManager = ListDataManager(this)
+    // lateinit var listsRecyclerView: RecyclerView
+    // val listDataManager: ListDataManager = ListDataManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,13 +57,7 @@ class MainActivity : AppCompatActivity(),
         // listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
 
 
-        val lists = listDataManager.readLists()
 
-        listsRecyclerView.findViewById<RecyclerView>(R.id.lists_recyclerview)
-        listsRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        // Listen here on this activity
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -100,10 +96,8 @@ class MainActivity : AppCompatActivity(),
         builder.setPositiveButton(positiveButtonTitle) { dialog, i ->
 
             val list = TaskList(listTitleEditText.text.toString())
-            listDataManager.saveList(list)
+            listSelectionFragment.addList(list)
 
-            val recyclerAdapter = listsRecyclerView.adapter as ListSelectionRecyclerViewAdapter
-            recyclerAdapter.addList(list)
 
             dialog.dismiss()
             showListDetail(list)
@@ -139,18 +133,13 @@ class MainActivity : AppCompatActivity(),
                 // If it's the result you want, you UNWRAP THE DATA INTENT passed in,
                 // update the listDataManager, then I assume the last step
                 // called "updateLists()" will tell your recyclerView to refresh?
-                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY))
-                updateLists()
+                listSelectionFragment.saveList(data.getParcelableExtra(INTENT_LIST_KEY))
             }
         }
     }
 
-    private fun updateLists() {
-        val lists = listDataManager.readLists()
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
-    }
 
-    override fun listItemClicked(list: TaskList) {
+    override fun onListItemClicked(list: TaskList) {
         showListDetail(list)
     }
 }
