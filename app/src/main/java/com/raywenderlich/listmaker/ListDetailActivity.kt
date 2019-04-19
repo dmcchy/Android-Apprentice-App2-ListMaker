@@ -1,5 +1,7 @@
 package com.raywenderlich.listmaker
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -60,7 +62,7 @@ class ListDetailActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.task_to_add)
             .setView(taskEditText)
-            .setPositiveButton(R.string.add_task, { dialog, _ ->
+            .setPositiveButton(R.string.add_task) { dialog, _ ->
                 val task = taskEditText.text.toString()
                 list.tasks.add(task)
 
@@ -71,8 +73,27 @@ class ListDetailActivity : AppCompatActivity() {
                 recyclerAdapter.notifyItemInserted(list.tasks.size)
 
                 dialog.dismiss()
-            })
+            }
             .create()
             .show()
+    }
+
+    // Wow, this event tells MainActivity everything is ok,
+    // very useful when giving messages to the previous screen while back pressing.
+    override fun onBackPressed() {
+
+        // Make a bundle.
+        val bundle = Bundle()
+        // Put something in it.
+        bundle.putParcelable(MainActivity.INTENT_LIST_KEY, list)
+
+        // Also put an intent.
+        val intent = Intent()
+        intent.putExtras(bundle)
+        setResult(Activity.RESULT_OK, intent)
+
+        // Pass that off to MainActivity who will know what to look for having it identified as:
+        // INTENT_LIST_KEY
+        super.onBackPressed()
     }
 }

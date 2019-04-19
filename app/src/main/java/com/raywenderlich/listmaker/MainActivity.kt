@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity(),
 
     companion object {
         val INTENT_LIST_KEY = "list"
+        val LIST_DETAIL_REQUEST_CODE = 123
     }
 
     // "lateinit" = this item is going to be created sometime in the "future". hmmm for optimization purposes I guess...
@@ -116,7 +117,37 @@ class MainActivity : AppCompatActivity(),
         val listDetailIntent = Intent(this, ListDetailActivity::class.java)
 
         listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-        startActivity(listDetailIntent)
+
+        // This line starts your detail Activity as intended; however, it also adds the expectation
+        // that MainActivity.kt will hear back from ListDetailActivity.kt once it has finished
+        // being onscreen. So this is inter-activity communication?
+        // LIST_DETAIL_REQUEST_CODE tells me I am here back from this activitiy.
+        startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
+    }
+
+    // This method will make this MainActivity receive the results of any
+    // activity it starts.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Make sure request code is the same code you are expecting to get back from another
+        // activity. (I think you don't even need this step for a rudimentary example)
+        if (requestCode == LIST_DETAIL_REQUEST_CODE) {
+            // Wow, this data.let is a shorthand for checking if an object is not
+            // null, before execution.
+            data?.let {
+                // If it's the result you want, you UNWRAP THE DATA INTENT passed in,
+                // update the listDataManager, then I assume the last step
+                // called "updateLists()" will tell your recyclerView to refresh?
+                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY))
+                updateLists()
+            }
+        }
+    }
+
+    private fun updateLists() {
+        val lists = listDataManager.readLists()
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
     }
 
     override fun listItemClicked(list: TaskList) {
